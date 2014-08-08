@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html>
+	<head>
+
+		<meta charset="utf-8">
+		<title>VML|Kernel Diff</title>
+		<!-- CDN js/css -->
+		<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+		<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.5.4/bootstrap-select.css">
+		<link rel="stylesheet" href="/media/diff/style.css">
+		<script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+		<script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+		<script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.5.4/bootstrap-select.js"></script>
+
+	</head>
+
+
+
+
+
+	<body style="margin-left: 10px; margin-right: 0px;">
+
+		<!-- Kernel selection form -->
+		<div id="kernel_selection_form" style="padding-top: 10px; padding-bottom: 10px;">
+			<form method="post">{% csrf_token %}
+				<div style="width: 100px; display: relative; float:left; margin-right: 10px;">
+					<button type="submit" class="btn btn-default">
+						Diff Kernels
+					</button>
+				</div>
+				<div class="row" style="width: calc(50% - 30px); display: relative; float: left;">
+					{% load widget_tweaks %}
+					{{ form.kernel_one|append_attr:"class:selectpicker col-sm-12"|append_attr:"data-style:btn-primary"|append_attr:"data-live-search:true" }}
+					<script type="text/javascript">
+						$('.selectpicker').selectpicker('render');
+					</script>
+				</div>
+				<div class="row" style="width: calc(50% - 45px); display: relative; float: right; margin-right: 0px;">
+					{{ form.kernel_two|append_attr:"class: selectpicker col-sm-12"|append_attr:"data-style:btn-warning"|append_attr:"data-live-search: true"|append_attr:"style: padding-right:0px;"}}
+					<script type="text/javascript">
+						$('.selectpicker').selectpicker('render');
+					</script>
+				</div>
+			</form>
+		</div>
+
+		{% if kdi %}
+
+			<button type="button" class="btn btn-default" style="width: 100px; margin-right: 10px; float: left; height: 37.59px;">Help</button>
+
+			<!-- Buttons that toggle which modules/aliases to display -->
+			<div class="btn-group" style="width: calc(100% - 110px); margin-bottom: 10px; padding-right: 10px;">
+
+			  <button type="button" class="btn btn-primary btn-old-mod" style="width: 20%;">old mod - devices<span class="badge pull-right" style="padding: 6px 8px;">{{ kdi.kv1m }}</span></button>
+
+			  <button type="button" class="btn btn-primary btn-old-vsn" style="width: 20%; background-color: #4FA293;">old vsn - devices<span class="badge pull-right" style="padding: 6px 8px;color: #4FA293;">{{ kdi.kv1v }}</span></button>
+
+			  <button type="button" class="btn btn-success btn-diff-vsn" style="width: 20%; border-left-color: #357ebd; border-top-color: #357ebd; border-bottom-color: #357ebd">diff vsn - mods<span class="badge pull-right" style="padding: 6px 8px;">{{ kdi.dv }}</span></button>
+
+			  <button type="button" class="btn btn-primary btn-new-vsn" style="width: 20%; background-color: #99cc66;">new vsn - devices<span class="badge pull-right" style="padding: 6px 8px;color: #99cc66;">{{ kdi.kv2v }}</span></button>
+
+			  <button type="button" class="btn btn-primary btn-new-mod" style="width: 20%;background-color: #f0ad4e">new mod - devices<span class="badge pull-right" style="padding: 6px 8px;color: #f0ad4e;">{{ kdi.kv2m }}</span></button>
+			</div>
+
+			<!-- Output of the Kernel Diff -->
+			<div id="kernel_diff_output_rows">
+				{% for mod in kdi.mods %}
+					<!-- Each row (contains modules and aliases) -->
+					<div id="module-button-group-{% if mod.k1m %}{{ mod.k1m.m }}{% else %}{{ mod.k2m.m }}{% endif %}"class="module-button-group {% if mod.k1m %}{{ mod.k1m.m }}{% else %}{{ mod.k2m.m }}{% endif %}{% if mod.k1m.a %}{% if not mod.k2m %} old-mod{% else %} old-vsn{% endif %}{% endif %}{% if mod.k2m.a %}{% if not mod.k1m %} new-mod{% else %} new-vsn{% endif %}{% endif %}{% if not mod.k1m.a and not mod.k2m.a %} diff-mod{% endif %} btn-group btn-group-justified" style="width: calc(100% - 15px);margin-bottom: 10px;">
+						{% if mod.k1m %}
+
+							<div class="btn-group" style="width:50%; float: left;">
+
+
+								<button class="module-button {% if mod.k1m %}{{ mod.k1m.m }}{% else %}{{ mod.k2m.m }}{% endif %} btn btn-default {% if mod.k1m.a or mod.k2m.a %}btn-lg {% if mod.k1m.a %}btn-danger{% endif %}{% endif %}" style="width: 100%; text-align: center;">{{ mod.k1m.m}} {{ mod.k1m.v }} {{ mod.k1m.srcv }}</button>		
+
+
+							</div>
+
+
+						{% endif %}
+
+						{% if mod.k2m %}
+
+							<div class="btn-group" style="width:50%; float: right;">
+
+
+								<button class="module-button {% if mod.k1m %}{{ mod.k1m.m }}{% else %}{{ mod.k2m.m }}{% endif %} btn btn-default {% if mod.k2m.a or mod.k1m.a %}btn-lg {% if mod.k2m.a %}btn-danger{% endif %}{% endif %}" style="width: 100%; text-align: center;">{{ mod.k2m.m}} {{ mod.k2m.v }} {{ mod.k2m.srcv }}</button>		
+
+
+							</div>
+
+
+						{% endif %}
+					</div>
+
+
+					<div class="row_spacer" style="width: 100%; display: relative; float: right;">
+					</div>
+
+					{% if mod.k1m.a %}
+						<div class="aliases old {{ mod.k1m.m }} aliases-{{ mod.k1m.m }}{{ mod.k1m.v }}{{ mod.k1m.srcv }}" style="width:calc(50% - 8px); margin-left: 0px; padding-left: 0px; float: left;">
+							<div class="list-group {% if mod.k2m %} old-vsn {% else %} old-mod{% endif %}" style="width: calc(100% - 5px); margin-bottom: 10px; padding-left: 0px; display:block; float: left;">
+							{% for alias in mod.k1m.a %}
+								<div id="{{ mod.k1m.m }}{{ alias.a.r }}" class="raw-alias-list-item list-group-item list-group-item-danger" style="margin-bottom: 0px; border-top: 1px solid #ccc;" >
+									<div class="list-group-item-heading">
+										<p><span style="font-weight: bold;">Alias: </span>{{ alias.a.r }}</p>
+									</div>
+									<div class="list-group-item-text" style="margin-bottom: 0px;">
+										<p style="margin-bottom: 0px;"><span style="font-weight: bold;">Device name: </span>{{ alias.a.p }}</p>
+									</div>
+								</div>
+							{% endfor %}
+							</div>
+						</div>
+					{% endif %}
+
+					{% if mod.k2m.a %}
+						<div class="aliases new {{ mod.k2m.m }} aliases-{{ mod.k2m.m }}{{ mod.k2m.v }}{{ mod.k2m.srcv }}" style="width:calc(50% - 8px); margin-left: 0px; padding-left: 0px; float: right; margin-right: 15px;">
+							<div class="list-group {% if mod.k1m %} new-vsn {% else %} new-mod{% endif %}" style="width: calc(100% - 5px); margin-bottom: 10px; padding-left: 0px; display:block; float: right;">
+							{% for alias in mod.k2m.a %}
+								<div id="{{ mod.k2m.m }}{{ alias.a.r }}" class="raw-alias-list-item list-group-item list-group-item-danger" style="margin-bottom: 0px; border-top: 1px solid #ccc;" >
+									<div class="list-group-item-heading">
+										<p><span style="font-weight: bold;">Alias: </span>{{ alias.a.r }}</p>
+									</div>
+									<div class="list-group-item-text" style="margin-bottom: 0px;">
+										<p style="margin-bottom: 0px;"><span style="font-weight: bold;">Device name: </span>{{ alias.a.p }}</p>
+									</div>
+								</div>
+							{% endfor %}
+							</div>
+						</div>
+					{% endif %}
+
+					<!-- Just keeps the row justified after all output is done -->
+					<div class="row_spacer" style="width: calc(100% - 110px); display: relative; float: right;">
+					</div>
+
+
+				{% endfor %}
+
+				<script>
+					$(document).ready(function DiagnosticButtons() {
+
+						$('.diff-mod').toggle()
+						$('.btn-diff-vsn').toggleClass("grey")
+
+						var value_for_old_vsn = 1
+						var value_for_new_vsn = 1
+
+						$('.btn-old-vsn').click(function() {
+							$(this).toggleClass("grey")
+							$(".module-button-group.old-vsn").each(function() {
+							    module_group_id = $(this).attr("id");
+							    module_name = module_group_id.substring(20)
+								if (($(this).hasClass("new-vsn")) && (value_for_new_vsn == 0)) {
+									$(".aliases.old."+module_name).toggle()
+									$(".module-button."+module_name).toggleClass("btn-lg")
+									$(".device_bucket."+module_name).toggle()
+								} else if (! ($(this).hasClass("new-vsn")) ) {
+									$(".aliases."+module_name).toggle()
+									$(".module-button."+module_name).toggleClass("btn-lg")
+									$(".device_bucket."+module_name).toggle()
+								} else if ($(this).hasClass("new-vsn")) {
+									$(".aliases.old."+module_name).toggle()
+								}
+							})
+							console.log(value_for_old_vsn)
+							if (value_for_old_vsn === 1) {
+								value_for_old_vsn = 0
+							} else {
+								value_for_old_vsn = 1
+							}
+						})
+						$('.btn-new-vsn').click(function() {
+							$(this).toggleClass("grey")
+							$(".module-button-group.new-vsn").each(function() {
+							    module_group_id = $(this).attr("id");
+							    module_name = module_group_id.substring(20)
+								if (($(this).hasClass("old-vsn")) && (value_for_old_vsn == 0)) {
+									$(".aliases.new."+module_name).toggle()
+									$(".module-button."+module_name).toggleClass("btn-lg")
+									$(".device_bucket."+module_name).toggle()
+								} else if (! ($(this).hasClass("old-vsn")) ) {
+									$(".aliases."+module_name).toggle()
+									$(".module-button."+module_name).toggleClass("btn-lg")
+									$(".device_bucket."+module_name).toggle()
+								} else if ($(this).hasClass("old-vsn")) {
+									$(".aliases.new."+module_name).toggle()
+								}
+							})
+							console.log(value_for_new_vsn)
+							if (value_for_new_vsn === 1) {
+								value_for_new_vsn = 0
+							} else {
+								value_for_new_vsn = 1
+							}
+						})
+						$('.btn-diff-vsn').click(function() {
+							$('.diff-mod').toggle()
+							$(this).toggleClass("grey")
+						})
+						$('.btn-old-mod').click(function() {
+							$('.old-mod').toggle()
+							$(this).toggleClass("grey")
+						})
+						$('.btn-new-mod').click(function() {
+							$('.new-mod').toggle()
+							$(this).toggleClass("grey")
+						})
+					})
+				</script>
+
+
+			</div>
+		{% endif %}
+
+	</body>
+</html>
+
+

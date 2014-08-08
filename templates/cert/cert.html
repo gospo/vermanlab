@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+	<head>
+
+		<meta charset="utf-8">
+		<title>VML|Kernel Diff</title>
+		<!-- CDN js/css -->
+		<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+		<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.5.4/bootstrap-select.css">
+		<link rel="stylesheet" href="/media/diff/style.css">
+		<script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+		<script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+		<script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.5.4/bootstrap-select.js"></script>
+
+	</head>
+
+	<body style="margin-left: 10px; margin-right: 0px;">
+
+		<!-- Kernel selection form -->
+		<div id="note_area" style="width: calc(100% - 30px); float: left;">
+			<h3>You can find the alias for a piece of hardware by looking <a href="http://pci-ids.ucw.cz/read/PC?restrict=" target="_blank">here</a></h3>
+		</div>
+		<div id="device_selection_form" style="padding-top: 10px; padding-bottom: 10px;">
+			<form method="post">{% csrf_token %}
+				<div style="width: 100px; display: relative; float:left; margin-right: 10px;">
+					<button type="submit" class="btn btn-default">
+						Check Kernels
+					</button>
+				</div>
+				<div class="row" style="width: calc(100% - 130px); display: relative; float: right; margin-right: 15px;">
+					{% load widget_tweaks %}
+					{{ form.selectedAlias|append_attr:"class:selectpicker col-sm-12"|append_attr:"data-style:btn-primary"|append_attr:"data-live-search:true" }}
+					<script type="text/javascript">
+						$('.selectpicker').selectpicker('render');
+					</script>
+				</div>
+			</form>
+		</div>
+		<div id="kernel_area" style="width: calc(100% - 30px); float: left;">
+		{% if enabled_kernels %}
+		<h3>Enabled kernels include:</h3>
+			{% for kernel in enabled_kernels %}
+				<ul>
+				{% if kernel.errata %}
+					<li>{{ kernel.errata }} ({{ kernel.name }})</li>
+				{% endif %}
+				</ul>
+			{% endfor %}
+		{% if not nonenabled_kernels %}
+			<h3>All RHEL6 and RHEL7 Kernels enabled</h3>
+		{% endif %}
+		{% endif %}
+		{% if nonenabled_kernels %}
+		<h3>Non-enabled kernels include:</h3>
+			{% for kernel in nonenabled_kernels %}
+				<ul>
+				{% if kernel.errata %}
+					<li>{{ kernel.errata }} ({{ kernel.name }})</li>
+				{% endif %}
+				</ul>
+			{% endfor %}
+		{% if not enabled_kernels %}
+			<h3>No RHEL6 and RHEL7 Kernels enabled</h3>
+		{% endif %}
+		{% endif %}
+		</div>
+	</body>
+</html>

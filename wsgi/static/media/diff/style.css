@@ -1,0 +1,12 @@
+.grey {
+	background-color: #ccc!important;
+	color: #383838 !important;
+}
+
+button.grey span.badge {
+	color: #383838 !important;
+}
+
+li.raw-alias-list-item:hover {
+	font-weight: bold !important;
+}

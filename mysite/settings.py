@@ -14,6 +14,9 @@ import socket
 
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
+TEMPLATE_DIRS = (
+    os.path.join(BASE_DIR, 'templates'),
+)
 
 # openshift is our PAAS for now.
 ON_PAAS = 'OPENSHIFT_REPO_DIR' in os.environ
@@ -52,6 +55,13 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'widget_tweaks',
+    'rest_framework',
+    'schema',
+    'upload',
+    'api',
+    'pci_ids',
+    'cert',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -112,5 +122,7 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'wsgi','static')
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
-
 )
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'wsgi','static/media')

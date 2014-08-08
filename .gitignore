@@ -3,3 +3,5 @@ db.sqlite3
 bin/*
 include/*
 lib/*
+wsgi/static/media/added/*
+wsgi/static/media/to_be_added/*
