@@ -1,7 +1,0 @@
-I have added the folder ___, and am running an http server on port XXXX.
-
-If you need to restart this app:
-	-> login as root
-	-> $ cd ~/vermanlab
-	-> $ source bin/activate
-	-> $ ./manage.py runserver XXXX &

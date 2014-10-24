@@ -11,21 +11,13 @@
                 <div style="margin-left: 15px; margin-right: 15px; width: calc(100% - 30px);">
                 <h1>Welcome to Verman Lab, a portal for visualizing PCI Device support in various kernel versions.</h1>
                 <br />
-                <h3>You can either <a href="http://intel-canoepass-08.lab.bos.redhat.com:8111/diff">diff kernels</a> or check <a href="http://vermanlab-jmitchel.rhcloud.com/cert">RHEL6/RHEL7 PCI device enablement</a>.</h3>
-                <br />
-                <br />
-                <h3>Important notes:</h3>
-                        <ul>
-                                <li>dzickus owns the box this app is running on</li>
-                                <li>If things do not work right, open an issue here, or email jlmitch5@ncsu.edu</li>
-                                <li>If you'd like to develop additional functionality for this app, I'd be happy to pass over push/pull access to the github repo just email me at jlmitch5@ncsu.edu</li>
-                        </ul>
+                <h3>You can either <a href="{% url 'diff:diff' %}">diff kernels</a> or check <a href="{% url 'cert:cert' %}">RHEL6/RHEL7 PCI device enablement</a>.</h3>
                 <br />
                 <br />
                 <h3>To add a new kernel:</h3>
                         <ul>
                                 <li>note: the kernel must be installed normally (as the script to parse the kernel and upload to the database looks in /lib/modules)</li>
-                                <li>go to <a href="http://intel-canoepass-08.lab.bos.redhat.com:8111/upload" target="_blank">the upload page</a></li>
+                                <li>go to <a href="{% url 'upload:upload' %}" target="_blank">the upload page</a></li>
                                 <li>download the shell script on that page</li>
                                 <li>upload the .tar.gz file created by the shell script on that page</li>
                                 <li>wait for the kernels from that machine to be parsed and added to the database (this may take a while)</li>
@@ -34,7 +26,7 @@
                                 </ul>
                                 <li>note: if this release is an externally-facing release add the errata information (ie: RHEL 6.2)</li>
                                 <ul>
-                                        <li>go to <a href="http://intel-canoepass-08.lab.bos.redhat.com:8111/admin" target="_blank">the admin page</a> and login with credentials UN: redhat_rules PW: redhat_is_the_best</li>
+                                        <li>go to <a href="{% url 'admin:index' %}" target="_blank">the admin page</a> and login with credentials UN: redhat_rules PW: redhat_is_the_best</li>
                                         <li>click "Kernel versions"</li>
                                         <li>select the kernel version you wish to change the errata for</li>
                                         <li>enter the errata in the text box next to errata</li>
@@ -44,7 +36,7 @@
                 <h3>To delete a kernel:</h3>
                         <ul>
                                 <li>note: deleting a kernel will not delete the modules and aliases that kernel uses.  this has no functional impact (as you can still reupload the kernel and it will not create duplicate pci modules or aliases in the database)</li>
-                                <li>go to <a href="http://intel-canoepass-08.lab.bos.redhat.com:8111/admin" target="_blank">the admin page</a> and login with credentials UN: redhat_rules PW: redhat_is_the_best</li>
+                                <li>go to <a href="{% url 'admin:index' %}" target="_blank">the admin page</a> and login with credentials UN: redhat_rules PW: redhat_is_the_best</li>
                                 <li>click "Kernel versions"</li>
                                 <li>select the checkbox next to the kernels you wish to delete (please don't delete one of the general release kernel versions, such as 6.3, 7.0, etc.)</li>
                         </ul>
@@ -58,7 +50,7 @@
                                         <li>if the link directs you to http://pciids.sourceforge.net/v2.2/pci.ids , skip the rest of the substeps</li>
                                         <li>if the link is different, Change the link in PROJECT_ROOT/pci_ids/views.py (also edit the above link in these directions to the newer one)</li>
                                 </ul>
-                                <li>go to <a href="http://intel-canoepass-08.lab.bos.redhat.com:8111/pci_ids" target="_blank">the pci_ids update page</a></li>
+                                <li>go to <a href="{% url 'pci_ids:pci_ids' %}" target="_blank">the pci_ids update page</a></li>
                                 <li>wait for the app to pull the latest pci.ids file, it will display "pci.ids file uploaded to verman lab database."</li>
                         </ul>
                 </div>

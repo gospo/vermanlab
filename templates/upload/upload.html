@@ -3,10 +3,18 @@
 	<head>
 		<meta charset="utf-8">
 		<title>VML|Upload</title>
+		<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+        <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+        <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
 	</head>
 
 
 	<body style="margin-left: 20px; margin-right: 20px;">
+		<style>
+			p {
+				font-size: 12px !important;
+			}
+		</style>
 		<h2>
 			Upload your machine's installed kernel versions to Verman Lab:
 		</h2>
@@ -18,9 +26,9 @@
 			<h3>
 				<span style="font-weight: bold">Step 2:</span> Upload the file created by the script below:
 			</h3>
-			<form action="{% url "upload" %}" method="post" enctype="multipart/form-data">
+			<form action="{% url "upload:upload" %}" method="post" enctype="multipart/form-data">
 	                {% csrf_token %}
-	                <p>{{ form.non_field_errors }}</p>
+	                {{ form.non_field_errors }}
 	                <h3>
 	                	<span class="label label-primary">
 	                		{{ form.toBeAdded.label_tag }} {{ form.toBeAdded.help_text }}

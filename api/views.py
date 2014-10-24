@@ -4,13 +4,25 @@ from collections import namedtuple
 
 from django.http import HttpResponse
 
+from rest_framework import generics
 from rest_framework.views import APIView
 from rest_framework.response import Response
 
 from schema.models import KernelVersion, Module, Aliases
 from pci_ids.models import pciam
 
-from api.serializers import KernelVersionSerializer, AliasSerializer
+from api.serializers import KernelVersionSerializer, AliasSerializer, pci_idsSerializer
+
+# get all the pci_ids
+class pci_ids(generics.ListAPIView):
+    serializer_class = pci_idsSerializer
+
+    def get_queryset(self):
+        """
+        get all the pciams
+        """
+        queryset = pciam.objects.all();
+        return queryset
 
 # get all the kernel version in the system
 class GetKernelVersions(APIView):
@@ -90,15 +102,15 @@ class Diff(APIView):
     def getRawAliasFromNamedTuple(self, alias):
         # only return as many alias components as exist
         rawAlias = ""
-        if alias.vendor:
+        if alias.vendor != "null":
             rawAlias += self.padAliasComponent(alias.vendor)
-        if alias.device:
+        if alias.device != "null":
             rawAlias += ":"
             rawAlias += self.padAliasComponent(alias.device)
-        if alias.subvendor:
+        if alias.subvendor != "null":
             rawAlias += ":"
             rawAlias += self.padAliasComponent(alias.subvendor)
-        if alias.subdevice:
+        if alias.subdevice != "null":
             rawAlias += ":"
             rawAlias += self.padAliasComponent(alias.subdevice)
         return rawAlias
@@ -300,7 +312,7 @@ class Diff(APIView):
                 analogousModulePairList.append(
                     {
                         'k1m' : self.serializeModule(self.KERNEL_VERSION_1, name1, module1, aliasesForModule1)['k1m'],
-                        'k2m' : self.serializeModule(self.KERNEL_VERSION_2, name2, module1, aliasesForModule2)['k2m']
+                        'k2m' : self.serializeModule(self.KERNEL_VERSION_2, name2, module2, aliasesForModule2)['k2m']
                     }
                 )
             
